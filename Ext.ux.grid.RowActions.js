@@ -257,7 +257,7 @@ Ext.extend(Ext.ux.grid.RowActions, Ext.util.Observable, {
     ,tplGroup:
          '<tpl for="actions">'
         +'<div class="ux-grow-action-item<tpl if="\'right\'===align"> ux-action-right</tpl> '
-        +'{cls}" style="{style}" qtip="{qtip}">{text}</div>'
+        + '{cls}" style="{hide}{style}" qtip="{qtip}">{text}</div>' // added {hide} to enable hiding group actions (only hides all currently)
         +'</tpl>'
 
     /**
@@ -485,7 +485,9 @@ Ext.extend(Ext.ux.grid.RowActions, Ext.util.Observable, {
             var records;
             if(groupId) {
                 var re = new RegExp(RegExp.escape(groupId));
-                records = this.grid.store.queryBy(function(r) {
+
+                // Respect any existing filtering when returning group items
+                records = this.grid.store.data.filterBy(function(r) {
                     return r._groupId.match(re);
                 });
                 records = records ? records.items : [];
@@ -493,7 +495,7 @@ Ext.extend(Ext.ux.grid.RowActions, Ext.util.Observable, {
             action = t.className.replace(/ux-grow-action-item (ux-action-right )*/, '');
 
             // call callback if any
-            if('function' === typeof this.callbacks[action]) {
+            if(this.callbacks && 'function' === typeof this.callbacks[action]) {
                 this.callbacks[action](this.grid, records, action, groupId);
             }
 
