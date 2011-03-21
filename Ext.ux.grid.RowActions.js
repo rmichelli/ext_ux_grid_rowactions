@@ -15,7 +15,7 @@
  * @copyright (c) 2008, by Ing. Jozef Sakáloš
  * @date      22. March 2008
  * @version   1.0
- * @revision  $Id: Ext.ux.grid.RowActions.js 713 2009-05-18 23:40:07Z jozo $
+ * @revision  $Id: Ext.ux.grid.RowActions.js 747 2009-09-03 23:30:52Z jozo $
  *
  * @license Ext.ux.grid.RowActions is licensed under the terms of
  * the Open Source LGPL 3.0 license.  Commercial use is permitted to the extent
@@ -191,6 +191,12 @@ Ext.extend(Ext.ux.grid.RowActions, Ext.util.Observable, {
     ,dataIndex:''
 
     /**
+     * @cfg {Boolean} editable - Do not touch!
+     * Must be false to prevent errors in editable grids
+     */
+    ,editable:false
+
+    /**
      * @cfg {Array} groupActions Array of action to use for group headers of grouping grids.
      * These actions support static icons, texts and tooltips same way as {@link #actions}. There is one
      * more action config option recognized:
@@ -273,7 +279,7 @@ Ext.extend(Ext.ux.grid.RowActions, Ext.util.Observable, {
      * is still blank space occupied by the icon. In display mode, the visible icons are shifted taking
      * the space of the hidden icon.
      */
-    ,hideMode:'visiblity'
+    ,hideMode:'visibility'
 
     /**
      * @cfg {Number} widthIntercept Constant used for auto-width calculation (defaults to 4).
