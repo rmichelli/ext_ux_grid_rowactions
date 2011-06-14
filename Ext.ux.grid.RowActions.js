@@ -257,7 +257,7 @@ Ext.extend(Ext.ux.grid.RowActions, Ext.util.Observable, {
     ,tplGroup:
          '<tpl for="actions">'
         +'<div class="ux-grow-action-item<tpl if="\'right\'===align"> ux-action-right</tpl> '
-        + '{cls}" style="{hide}{style}" qtip="{qtip}">{text}</div>' // added {hide} to enable hiding group actions (only hides all currently)
+        + '{cls}" style="{hide}{style}" ext:qtip="{qtip}">{text}</div>' // added {hide} to enable hiding group actions (only hides all currently)
         +'</tpl>'
 
     /**
@@ -268,8 +268,8 @@ Ext.extend(Ext.ux.grid.RowActions, Ext.util.Observable, {
          '<div class="ux-row-action">'
         +'<tpl for="actions">'
         +'<div class="ux-row-action-item {cls} <tpl if="text">'
-        +'ux-row-action-text</tpl>" style="{hide}{style}" qtip="{qtip}">'
-        +'<tpl if="text"><span qtip="{qtip}">{text}</span></tpl></div>'
+        +'ux-row-action-text</tpl>" style="{hide}{style}" ext:qtip="{qtip}">'
+        +'<tpl if="text"><span ext:qtip="{qtip}">{text}</span></tpl></div>'
         +'</tpl>'
         +'</div>'
 
@@ -344,7 +344,7 @@ Ext.extend(Ext.ux.grid.RowActions, Ext.util.Observable, {
 
         // actions in grouping grids support
         if(view.groupTextTpl && this.groupActions) {
-            view.interceptMouse = view.interceptMouse.createInterceptor(function(e) {
+            view.processEvent = view.processEvent.createInterceptor(function(name, e) { // processEvent for Extjs 3.3.3, was interceptMouse in Extjs 2
                 if(e.getTarget('.ux-grow-action-item')) {
                     return false;
                 }
@@ -475,7 +475,7 @@ Ext.extend(Ext.ux.grid.RowActions, Ext.util.Observable, {
         }
 
         // handle group action click
-        t = e.getTarget('.ux-grow-action-item');
+        var t = e.getTarget('.ux-grow-action-item');
         if(t) {
             // get groupId
             var group = view.findGroup(target);
@@ -483,13 +483,13 @@ Ext.extend(Ext.ux.grid.RowActions, Ext.util.Observable, {
 
             // get matching records
             var records;
-            if(groupId) {
-                var re = new RegExp(RegExp.escape(groupId));
-
+            var groupIdFull = group ? group.id : null;
+            if(groupIdFull) {
                 // Respect any existing filtering when returning group items
                 records = this.grid.store.data.filterBy(function(r) {
-                    return r._groupId.match(re);
+                    return (r._groupId === groupIdFull);
                 });
+
                 records = records ? records.items : [];
             }
             action = t.className.replace(/ux-grow-action-item (ux-action-right )*/, '');
